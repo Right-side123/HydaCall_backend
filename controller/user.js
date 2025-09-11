@@ -1,0 +1,238 @@
+const pool = require('../config/db');
+
+function fixBigInt(obj) {
+    return JSON.parse(JSON.stringify(obj, (key, value) =>
+        typeof value === 'bigint' ? value.toString() : value
+    ));
+}
+
+
+
+// *********************************     Top Total Count API  Controller *************************
+
+const totalCountUserSummary = async (req, res) => {
+
+
+    try {
+
+        const totalUsers = await pool.query(`
+            SELECT COUNT(*) AS total_user FROM users
+            `);
+
+        const totalActiveUsers = await pool.query(`
+      SELECT COUNT(*) AS total_active FROM users WHERE status = 'active'
+    `);
+
+        const totalInactiveUsers = await pool.query(`
+      SELECT COUNT(*) AS total_inactive FROM users WHERE status = 'inactive'
+    `);
+
+        //     const [simNumbers] = await pool.query(`
+        //   SELECT COUNT(DISTINCT sim_number) AS total_sim FROM users
+        //   WHERE sim_number IS NOT NULL
+        // `);
+
+        const totalDepartments = await pool.query(`
+      SELECT COUNT(*) AS total_department FROM departments
+    `);
+
+        res.json({
+            users: fixBigInt(totalUsers[0].total_user || 0),
+            active_users: fixBigInt(totalActiveUsers[0].total_active || 0),
+            inactive_users: fixBigInt(totalInactiveUsers[0].total_inactive || 0),
+            // total_sim: simNumbers[0].total_sim,
+            departments: fixBigInt(totalDepartments[0].total_department || 0)
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+
+
+const createUser = async (req, res) => {
+    try {
+        const {
+            name,
+            email,
+            password,
+            department_id,
+            allowed_departments,
+            phone_number,
+            status,
+            password_expire_days,
+            date_format,
+            allowed_reports
+        } = req.body;
+
+        // console.log("Request Body:", req.body);
+
+        const result = await pool.query(
+            `INSERT INTO users 
+            (name, email, password, department_id, allowed_departments, phone_number, status, password_expire_days, date_format, allowed_reports) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                name,
+                email,
+                password,
+                department_id,
+                JSON.stringify(allowed_departments || []),
+                JSON.stringify(phone_number || []),
+                status,
+                password_expire_days,
+                date_format,
+                JSON.stringify(allowed_reports || [])
+            ]
+        );
+
+        const safeResult = fixBigInt(result);
+        res.status(201).json({
+            message: 'User created successfully',
+            id: safeResult.insertId
+        });
+    } catch (err) {
+        console.error('Error creating item:', err);
+        res.status(500).json({ error: 'Failed to create user' });
+    }
+};
+
+
+
+
+
+const getUser = async (req, res) => {
+    try {
+        const items = await pool.query(`
+            SELECT 
+                u.*, 
+                d.name AS department_name,
+                JSON_LENGTH(u.phone_number) AS phone_number_count
+            FROM users u
+            JOIN departments d ON u.department_id = d.id
+        `);
+
+        res.status(200).json(items);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+};
+
+
+
+const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Agar tum SQL/MariaDB use kar rahe ho to query aisa hoga:
+        const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json(rows[0]);
+    } catch (err) {
+        console.error("Error fetching user by ID:", err);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+// const updateUser = async (req, res) => {
+
+//     try {
+//         const { id } = req.params;
+//         const { name, email, password, department_id, allowed_department_id, phone_number, status, password_expire_days, date_format, allowed_reports } = req.body;
+//         const result = await pool.query(
+//             `UPDATE users 
+//    SET name = ?, email = ?, password = ?, department_id = ?, allowed_department_id = ?, 
+//        phone_number = ?, status = ?, password_expire_days = ?, date_format = ?, allowed_reports = ? 
+//    WHERE id = ?`,
+//             [name, email, password, department_id, allowed_department_id, phone_number, status, password_expire_days, date_format, allowed_reports, id]
+//         );
+
+//         if (result.affectedRows === 0) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+//         res.status(200).json({ message: 'User updated successfully' });
+//     } catch (error) {
+//         console.error('Error updating user:', error);
+//         res.status(500).json({ error: 'Failed to update user' });
+//     }
+// };
+
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            name,
+            email,
+            password,
+            department_id,
+            allowed_departments,
+            phone_number,
+            status,
+            password_expire_days,
+            date_format,
+            allowed_reports
+        } = req.body;
+
+        const result = await pool.query(
+            `UPDATE users 
+             SET name = ?, email = ?, password = ?, department_id = ?, 
+                 allowed_departments = ?, phone_number = ?, status = ?, 
+                 password_expire_days = ?, date_format = ?, allowed_reports = ? 
+             WHERE id = ?`,
+            [
+                name,
+                email,
+                password,
+                department_id,
+                JSON.stringify(allowed_departments || []),
+                JSON.stringify(phone_number || []),
+                status,
+                password_expire_days,
+                date_format,
+                JSON.stringify(allowed_reports || []),
+                id
+            ]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ message: 'User updated successfully' });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'Failed to update user' });
+    }
+};
+
+
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query('DELETE FROM users WHERE id = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ error: 'Failed to delete user' });
+    }
+};
+
+module.exports = {
+    totalCountUserSummary,
+    createUser,
+    getUser,
+    getUserById,
+    updateUser,
+    deleteUser
+}
