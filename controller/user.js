@@ -36,12 +36,17 @@ const totalCountUserSummary = async (req, res) => {
       SELECT COUNT(*) AS total_department FROM departments
     `);
 
+        const totalSimNumber = await pool.query(`
+        SELECT COUNT(*) AS total_simnumber FROM sim_numbers
+         `);
+
         res.json({
             users: fixBigInt(totalUsers[0].total_user || 0),
             active_users: fixBigInt(totalActiveUsers[0].total_active || 0),
             inactive_users: fixBigInt(totalInactiveUsers[0].total_inactive || 0),
             // total_sim: simNumbers[0].total_sim,
-            departments: fixBigInt(totalDepartments[0].total_department || 0)
+            departments: fixBigInt(totalDepartments[0].total_department || 0),
+            simnumbers: fixBigInt(totalSimNumber[0].total_simnumber || 0)
         });
     } catch (err) {
         console.error(err);
