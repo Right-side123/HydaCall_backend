@@ -86,24 +86,24 @@ const updateSimNumber = async (req, res) => {
         const { id } = req.params;
         const { Name, Department } = req.body;
 
-        console.log("🟢 Received body:", req.body);
-        console.log("🟢 Updating SIM ID:", id);
+        // console.log(" Received body:", req.body);
+        // console.log(" Updating SIM ID:", id);
 
         const oldRows = await pool.query("SELECT * FROM sim_numbers WHERE id = ?", [id]);
-        console.log("🟢 Old Rows Result:", oldRows);
+        // console.log("Old Rows Result:", oldRows);
 
         const oldData = oldRows[0]; // first row
         if (!oldData) {
             return res.status(404).json({ message: "SIM Number not found" });
         }
-        console.log("🟢 Old Data Fetched:", oldData);
+        // console.log(" Old Data Fetched:", oldData);
 
         // Update main table
         const result = await pool.query(
             `UPDATE sim_numbers SET Name = ?, Department = ? WHERE id = ?`,
             [Name, Department, id]
         );
-        console.log("🟢 Update result:", result);
+        // console.log("Update result:", result);
 
         // Insert into history
         await pool.query(
@@ -168,12 +168,12 @@ const getUpdateSimNumberByNumber = async (req, res) => {
     console.log("Hit route", req.params);
     try {
         const { sim_number } = req.params;
-        console.log(sim_number);
-        
+        // console.log(sim_number);
+
 
         // Ensure it's string
         const simNumberStr = sim_number.toString();
-        console.log(simNumberStr);
+        // console.log(simNumberStr);
 
 
         const rows = await pool.query(

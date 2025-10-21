@@ -13,7 +13,9 @@ const {
     updateUser,
     deleteUser,
     totalCountUserSummary,
-    getUserById
+    getUserById,
+    UsersAssignedNumbers,
+    getUserSimDetails
 } = require('../controller/user');
 const {
     getSimNumber,
@@ -37,6 +39,7 @@ router.get('/user', getUser);
 router.get('/user/:id', getUserById);
 router.put('/user/:id', updateUser);
 router.delete('/user/:id', deleteUser);
+router.get('/usersnumber/:userId', UsersAssignedNumbers);
 
 
 router.get('/simnumber', getSimNumber);

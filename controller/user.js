@@ -233,11 +233,60 @@ const deleteUser = async (req, res) => {
     }
 };
 
+// *************************    assigned number of user  ************************
+
+const UsersAssignedNumbers = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        // 1️⃣ Fetch user's phone_number JSON array
+        const result = await pool.query("SELECT phone_number FROM users WHERE id = ?", [userId]);
+        const userRows = Array.isArray(result[0]) ? result[0] : result;
+
+
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // 2️⃣ Parse JSON string to array
+        let phoneNumbers;
+        try {
+            phoneNumbers = JSON.parse(userRows[0].phone_number);
+        } catch (err) {
+            return res.status(400).json({ message: "Invalid phone_number format in database" });
+        }
+
+        if (!Array.isArray(phoneNumbers) || phoneNumbers.length === 0) {
+            return res.status(400).json({ message: "No phone numbers found for this user" });
+        }
+
+        // 3️⃣ Fetch SIM details from sim_details table using those numbers
+        const simResult = await pool.query(
+            "SELECT SIM_Number, Name, Department FROM sim_numbers WHERE SIM_Number IN (?)",
+            [phoneNumbers]
+        );
+        const simDetails = Array.isArray(simResult[0]) ? simResult[0] : simResult;
+
+
+        // 4️⃣ Return SIM details
+        if (simDetails.length === 0) {
+            return res.status(404).json({ message: "No SIM details found for selected numbers" });
+        }
+
+        res.status(200).json(simDetails);
+    } catch (error) {
+        console.error("❌ Error fetching SIM details:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
+
 module.exports = {
     totalCountUserSummary,
     createUser,
     getUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    UsersAssignedNumbers
 }

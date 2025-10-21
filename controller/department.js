@@ -62,7 +62,6 @@ const deleteDepartment = async (req, res) => {
     }
 };
 
-
 module.exports = {
     createDepartment,
     getDepartment,
