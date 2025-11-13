@@ -26,6 +26,10 @@ const {
     getUpdateSimNumberByNumber
 } = require('../controller/simnumbers');
 
+const { getReport, getCallSummeryReport } = require('../controller/report');
+
+const { getHourlyAnalysis, getHourlyReport } = require('../controller/hourlyreport');
+
 
 
 router.post('/department', createDepartment);
@@ -50,5 +54,12 @@ router.get('/updatedsimnumber', getUpdateSimNumber);
 router.get('/updatedsimnumber/:id', getUpdateSimNumberById);
 
 router.get('/updatedsimnumber/phone_number/:sim_number', getUpdateSimNumberByNumber);
+
+
+router.get('/report', getReport);
+router.get('/callsummeryreport', getCallSummeryReport);
+
+router.get('/hourlyreport', getHourlyAnalysis);
+router.get('/hourlyreportsimnumber', getHourlyReport);
 
 module.exports = router;
