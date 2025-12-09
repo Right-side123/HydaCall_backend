@@ -30,6 +30,8 @@ const { getReport, getCallSummeryReport } = require('../controller/report');
 
 const { getHourlyAnalysis, getHourlyReport } = require('../controller/hourlyreport');
 
+const { getDayWiseReport } = require('../controller/daywisereport');
+
 
 
 router.post('/department', createDepartment);
@@ -61,5 +63,7 @@ router.get('/callsummeryreport', getCallSummeryReport);
 
 router.get('/hourlyreport', getHourlyAnalysis);
 router.get('/hourlyreportsimnumber', getHourlyReport);
+
+router.get('/daywisereport', getDayWiseReport);
 
 module.exports = router;

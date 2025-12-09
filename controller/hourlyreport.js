@@ -88,7 +88,7 @@ const pool = require("../config/db");
 // };
 
 const getHourlyAnalysis = async (req, res) => {
-  const { startDate, endDate, department_id, callType, startTime, endTime } = req.query;
+  const { startDate, endDate, startTime, endTime, callType, department_id, userId, simNumber } = req.query;
 
   try {
     let filterQuery = "";
@@ -99,7 +99,12 @@ const getHourlyAnalysis = async (req, res) => {
     if (callType) {
       filterQuery += ` AND c.Call_Type = '${callType}'`;
     }
-
+    if (userId) {
+      filterQuery += ` AND u.id = ${userId}`;
+    }
+    if (simNumber) {
+      filterQuery += ` AND s.SIM_Number = '${simNumber}'`;
+    }
 
     const startDateTime = `${startDate} ${startTime || "00:00"}:00`;
     const endDateTime = `${endDate} ${endTime || "23:59"}:59`;
@@ -506,15 +511,15 @@ function formatDuration(seconds) {
 // };
 
 const getHourlyReport = async (req, res) => {
-  const { startDate, endDate, startTime, endTime, callType, department_id, user, sim_number } = req.query;
+  const { startDate, endDate, startTime, endTime, callType, department_id, userId, simNumber } = req.query;
 
   try {
     // Build filter dynamically
     let filterQuery = "";
     if (department_id) filterQuery += ` AND u.department_id = ${department_id}`;
     if (callType) filterQuery += ` AND c.Call_Type = '${callType}'`;
-    if (user) filterQuery += ` AND u.id = ${user}`; // assuming "user" is user id
-    if (sim_number) filterQuery += ` AND s.SIM_Number = '${sim_number}'`;
+    if (userId) filterQuery += ` AND u.id = ${userId}`;
+    if (simNumber) filterQuery += ` AND s.SIM_Number = '${simNumber}'`;
 
     const startDateTime = `${startDate} ${startTime || "00:00"}:00`;
     const endDateTime = `${endDate} ${endTime || "23:59"}:59`;
@@ -677,8 +682,5 @@ const getHourlyReport = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
-
-
-
 
 module.exports = { getHourlyAnalysis, getHourlyReport };
