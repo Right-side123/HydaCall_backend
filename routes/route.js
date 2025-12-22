@@ -32,6 +32,11 @@ const { getHourlyAnalysis, getHourlyReport } = require('../controller/hourlyrepo
 
 const { getDayWiseReport } = require('../controller/daywisereport');
 
+const { getNeverAttendCalls,
+    getNotPickedByClientCalls,
+    getUniqueClientReport
+} = require('../controller/neverAttendreport');
+
 
 
 router.post('/department', createDepartment);
@@ -65,5 +70,9 @@ router.get('/hourlyreport', getHourlyAnalysis);
 router.get('/hourlyreportsimnumber', getHourlyReport);
 
 router.get('/daywisereport', getDayWiseReport);
+
+router.get('/neverattendreport', getNeverAttendCalls);
+router.get('/notpickupbyclient', getNotPickedByClientCalls);
+router.get('/uniqueclient', getUniqueClientReport);
 
 module.exports = router;
