@@ -37,7 +37,10 @@ const { getNeverAttendCalls,
     getUniqueClientReport
 } = require('../controller/neverAttendreport');
 
+const { getCallLogs, getCallLogTotal } = require('../controller/calllogs')
 
+router.get('/calllogstotal', getCallLogTotal);
+router.get('/calllogs', getCallLogs);
 
 router.post('/department', createDepartment);
 router.get('/department', getDepartment);

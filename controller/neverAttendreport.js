@@ -203,7 +203,7 @@ const getUniqueClientReport = async (req, res) => {
             filterQuery += ` AND s.SIM_Number = ?`;
             filterParams.push(simNumber);
         }
-        
+
         if (callType) {
             filterQuery += ` AND c.Call_Type = ?`
             filterParams.push(callType);
@@ -261,25 +261,25 @@ ORDER BY last_call_details DESC;
 
         const rows = await pool.query(query, params);
 
-    const formatted = rows.map((row, index) => ({
-    "#": index + 1,
-    CustomerNumber: row.customer_number,
-    TotalCalls: Number(row.total_calls),
-    TotalDuration: Number(row.total_duration),
-    IncomingCalls: Number(row.incoming_calls),
-    IncomingDuration: Number(row.incoming_duration),
-    OutgoingCalls: Number(row.outgoing_calls),
-    OutgoingDuration: Number(row.outgoing_duration),
-    Missed: Number(row.missed),
-    ConnectedCalls: Number(row.connected_calls),
-    NeverAttended: Number(row.never_attended),
-    LastCallDate: row.last_call_details
-        ? new Date(row.last_call_details).toLocaleDateString("en-GB")
-        : "-",
-    LastCallTime: row.last_call_details
-        ? new Date(row.last_call_details).toLocaleTimeString("en-GB")
-        : "-"
-}));
+        const formatted = rows.map((row, index) => ({
+            "#": index + 1,
+            CustomerNumber: row.customer_number,
+            TotalCalls: Number(row.total_calls),
+            TotalDuration: Number(row.total_duration),
+            IncomingCalls: Number(row.incoming_calls),
+            IncomingDuration: Number(row.incoming_duration),
+            OutgoingCalls: Number(row.outgoing_calls),
+            OutgoingDuration: Number(row.outgoing_duration),
+            Missed: Number(row.missed),
+            ConnectedCalls: Number(row.connected_calls),
+            NeverAttended: Number(row.never_attended),
+            LastCallDate: row.last_call_details
+                ? new Date(row.last_call_details).toLocaleDateString("en-GB")
+                : "-",
+            LastCallTime: row.last_call_details
+                ? new Date(row.last_call_details).toLocaleTimeString("en-GB")
+                : "-"
+        }));
 
 
         res.json(formatted);

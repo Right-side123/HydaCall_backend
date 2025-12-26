@@ -1,4 +1,3 @@
-// controllers/itemController.js
 const pool = require('../config/db');
 
 const createDepartment = async (req, res) => {

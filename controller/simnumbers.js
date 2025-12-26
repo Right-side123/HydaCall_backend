@@ -1,27 +1,4 @@
-
 const pool = require('../config/db');
-
-// const getSimNumber = async (req, res) => {
-//     try {
-//         const items = await pool.query(`
-//             SELECT 
-//                 s.*, 
-//                 d.name AS department_name,
-//             FROM sim_numbers u
-//             JOIN departments d ON u.department_id = d.id
-//         `);
-
-//         res.status(200).json(items);
-//     } catch (error) {
-//         console.error('Error fetching user:', error);
-//         res.status(500).json({ error: 'Failed to fetch user' });
-//     }
-// };
-
-
-
-// backend/controller/simnumbers.js
-
 
 const getSimNumber = async (req, res) => {
     try {
@@ -35,7 +12,6 @@ const getSimNumber = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch SIM numbers' });
     }
 };
-
 
 
 
@@ -55,29 +31,6 @@ const getSimNumberById = async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 };
-
-// const updateSimNumber = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { Name, Department } = req.body;
-
-//         const result = await pool.query(
-//             `UPDATE sim_numbers 
-//              SET Name = ?, Department = ? 
-//              WHERE id = ?`,
-//             [Name, Department, id]
-//         );
-
-//         if (result.affectedRows === 0) {
-//             return res.status(404).json({ message: 'SIM Number not found' });
-//         }
-
-//         res.status(200).json({ message: 'SIM Number updated successfully' });
-//     } catch (error) {
-//         console.error('Error updating SIM Number:', error);
-//         res.status(500).json({ error: 'Failed to update SIM Number' });
-//     }
-// };
 
 
 
@@ -193,18 +146,11 @@ const getUpdateSimNumberByNumber = async (req, res) => {
 };
 
 
-
-
-
-
-
 module.exports = {
     getSimNumber,
     getSimNumberById,
     updateSimNumber,
-
     getUpdateSimNumber,
     getUpdateSimNumberById,
-
     getUpdateSimNumberByNumber
 }

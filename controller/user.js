@@ -145,28 +145,6 @@ const getUserById = async (req, res) => {
     }
 };
 
-// const updateUser = async (req, res) => {
-
-//     try {
-//         const { id } = req.params;
-//         const { name, email, password, department_id, allowed_department_id, phone_number, status, password_expire_days, date_format, allowed_reports } = req.body;
-//         const result = await pool.query(
-//             `UPDATE users 
-//    SET name = ?, email = ?, password = ?, department_id = ?, allowed_department_id = ?, 
-//        phone_number = ?, status = ?, password_expire_days = ?, date_format = ?, allowed_reports = ? 
-//    WHERE id = ?`,
-//             [name, email, password, department_id, allowed_department_id, phone_number, status, password_expire_days, date_format, allowed_reports, id]
-//         );
-
-//         if (result.affectedRows === 0) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-//         res.status(200).json({ message: 'User updated successfully' });
-//     } catch (error) {
-//         console.error('Error updating user:', error);
-//         res.status(500).json({ error: 'Failed to update user' });
-//     }
-// };
 
 const updateUser = async (req, res) => {
     try {
@@ -214,7 +192,6 @@ const updateUser = async (req, res) => {
         res.status(500).json({ error: 'Failed to update user' });
     }
 };
-
 
 
 const deleteUser = async (req, res) => {
